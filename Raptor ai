@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta name="description" content="Raptor AI – Free, powerful AI Forex trading assistant. Real-time market analysis, signal generation, and automated insights without any subscription.">
+  <meta name="keywords" content="Forex AI, trading bot, free signals, machine learning forex, Raptor AI">
+  <meta name="author" content="Raptor AI">
+  <title>Raptor AI | Zero‑Cost Forex Intelligence</title>
+  <!-- Tailwind + Fonts + Icons + Charts -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    body { background: #0A0F1A; overflow-x: hidden; }
+    .glass-card { background: rgba(18, 24, 38, 0.85); backdrop-filter: blur(2px); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 24px; }
+    .hover-glow:hover { box-shadow: 0 0 12px rgba(59,130,246,0.3); border-color: rgba(59,130,246,0.6); transition: all 0.2s ease; }
+    .sidebar-item { transition: all 0.2s; cursor: pointer; }
+    .sidebar-item:hover { background: rgba(59,130,246,0.15); transform: translateX(4px); }
+    .active-nav { background: rgba(59,130,246,0.2); border-left: 3px solid #3b82f6; color: white; }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #111827; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
+    .chart-container canvas { max-height: 240px; width: 100%; }
+  </style>
+</head>
+<body class="text-gray-200">
+
+  <div class="flex flex-col md:flex-row min-h-screen">
+    <!-- SIDEBAR (Left) - inspired by Pipnex UI -->
+    <aside class="w-full md:w-72 bg-[#0C1122] border-r border-blue-900/30 p-5 space-y-6 sticky top-0 h-screen overflow-y-auto z-10">
+      <div class="flex items-center gap-3 pb-2 border-b border-blue-800/40">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/20">
+          <i class="fas fa-dragon text-white text-xl"></i>
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold tracking-tight bg-gradient-to-r from-white to-blue-300 bg-clip-text text-transparent">Raptor AI</h1>
+          <p class="text-[11px] text-blue-300/70">— Zero Subscription. Full Power.</p>
+        </div>
+      </div>
+      
+      <nav class="space-y-1.5">
+        <div class="text-xs uppercase tracking-wider text-blue-400/60 font-semibold px-3 mb-2">Core</div>
+        <div data-page="dashboard" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-300"><i class="fas fa-chart-line w-5"></i><span>Overview</span></div>
+        <div data-page="quicktools" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-300"><i class="fas fa-bolt w-5"></i><span>Quick Access Tools</span></div>
+        <div class="text-xs uppercase tracking-wider text-blue-400/60 font-semibold px-3 mt-5 mb-2">AI Modules</div>
+        <div data-page="prompt" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl"><i class="fas fa-comment-dots w-5"></i><span>Prompt Trading</span></div>
+        <div data-page="aitrading" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl"><i class="fas fa-microchip w-5"></i><span>AI Trading</span></div>
+        <div data-page="uploadchart" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl"><i class="fas fa-cloud-upload-alt w-5"></i><span>Upload Chart</span></div>
+        <div data-page="bots" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl"><i class="fas fa-robot w-5"></i><span>Manage Bots</span></div>
+        <div class="text-xs uppercase tracking-wider text-blue-400/60 font-semibold px-3 mt-5 mb-2">Account</div>
+        <div data-page="subscription" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl"><i class="fas fa-ticket-alt w-5"></i><span>Subscription</span></div>
+        <div data-page="support" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl"><i class="fas fa-headset w-5"></i><span>Contact Support</span></div>
+        <div data-page="settings" class="sidebar-item flex items-center gap-3 px-3 py-2.5 rounded-xl"><i class="fas fa-sliders-h w-5"></i><span>Settings</span></div>
+      </nav>
+      <div class="pt-6 text-xs text-center text-blue-300/40 border-t border-blue-900/40 mt-6">
+        <i class="fas fa-shield-alt"></i> 100% Free forever<br>No hidden fees
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 p-5 md:p-7 overflow-y-auto">
+      <!-- Top bar secondary navigation (Home, PropPass, Subscribe, Strategy) as in screenshot -->
+      <div class="flex flex-wrap gap-2 bg-[#0F1424]/80 p-2 rounded-2xl border border-blue-900/30 mb-8 backdrop-blur-sm">
+        <button data-topnav="dashboard" class="topnav-btn px-5 py-2 rounded-xl text-sm font-medium transition-all bg-blue-600/30 text-white shadow-sm"><i class="fas fa-home mr-1"></i> Home</button>
+        <button data-topnav="proppass" class="topnav-btn px-5 py-2 rounded-xl text-sm font-medium text-gray-300 hover:bg-blue-500/20"><i class="fas fa-chart-simple mr-1"></i> PropPass</button>
+        <button data-topnav="subscription" class="topnav-btn px-5 py-2 rounded-xl text-sm font-medium text-gray-300 hover:bg-blue-500/20"><i class="fas fa-gem mr-1"></i> Subscribe</button>
+        <button data-topnav="strategy" class="topnav-btn px-5 py-2 rounded-xl text-sm font-medium text-gray-300 hover:bg-blue-500/20"><i class="fas fa-brain mr-1"></i> Strategy</button>
+      </div>
+
+      <!-- DYNAMIC CONTENT PLACEHOLDER (JS will render pages) -->
+      <div id="page-container"></div>
+    </main>
+  </div>
+
+  <script>
+    // ----------------------------- GLOBAL STATE (FULL FEATURES, NO SUBSCRIPTION WALL) -------------------------
+    let state = {
+      aiAnalyses: 147,        // AI analyses today
+      signalsGen: 38,         // signals generated today
+      chartsAnalyzed: 592,    // charts analyzed total
+      preferredStrategy: "Momentum Breaker",
+      aiConfidence: 79,
+      autoTradingActive: false,
+      copyConfigured: false,
+      copyConfigName: "Not Configured",
+      lastSignals: ["BUY EUR/USD @ 1.0892 (Conf 82%)", "SELL GBP/JPY @ 192.45 (Conf 77%)", "BUY AUD/USD @ 0.6621 (Conf 91%)"],
+      botList: [
+        { id: 1, name: "Raptor Scalper", active: true, profit: "+2.3%" },
+        { id: 2, name: "TrendHunter AI", active: false, profit: "+0.0%" },
+        { id: 3, name: "Neural MeanRev", active: true, profit: "+1.7%" }
+      ]
+    };
+
+    // Helper: update UI stats in any rendered dashboard
+    function updateStatsUI() {
+      const statsCtn = document.getElementById('stats-dashboard');
+      if (!statsCtn) return;
+      statsCtn.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div class="glass-card p-5 hover-glow"><div class="flex justify-between"><span class="text-blue-300 text-sm">AI Analyses Today</span><i class="fas fa-chart-line text-blue-400"></i></div><div class="text-3xl font-bold mt-2">${state.aiAnalyses}</div><div class="text-xs text-gray-400">+12 from yesterday</div></div>
+          <div class="glass-card p-5 hover-glow"><div class="flex justify-between"><span class="text-blue-300 text-sm">Signals Generated</span><i class="fas fa-bullhorn text-blue-400"></i></div><div class="text-3xl font-bold mt-2">${state.signalsGen}</div><div class="text-xs text-gray-400">High probability setups</div></div>
+          <div class="glass-card p-5 hover-glow"><div class="flex justify-between"><span class="text-blue-300 text-sm">Charts Analyzed</span><i class="fas fa-chart-pie text-blue-400"></i></div><div class="text-3xl font-bold mt-2">${state.chartsAnalyzed}</div><div class="text-xs text-gray-400">Live + historical</div></div>
+          <div class="glass-card p-5 hover-glow"><div><span class="text-blue-300 text-sm">Preferred Strategy</span><i class="fas fa-chess-queen float-right"></i></div><div class="text-xl font-semibold mt-2">${state.preferredStrategy}</div><button id="changeStrategyBtn" class="text-xs mt-2 text-blue-400 underline">change strategy</button></div>
+          <div class="glass-card p-5 hover-glow"><div><span class="text-blue-300 text-sm">AI Confidence (Avg)</span><i class="fas fa-chart-simple float-right"></i></div><div class="text-3xl font-bold mt-2">${state.aiConfidence}%</div><div class="w-full bg-gray-700 rounded-full h-1.5 mt-2"><div class="bg-blue-500 h-1.5 rounded-full" style="width: ${state.aiConfidence}%"></div></div></div>
+          <div class="glass-card p-5 hover-glow"><div><span class="text-blue-300 text-sm">Auto-Trading</span><i class="fas fa-toggle-on float-right ${state.autoTradingActive ? 'text-green-400' : 'text-gray-500'}"></i></div><div class="flex items-center justify-between mt-3"><span class="text-lg font-mono">${state.autoTradingActive ? 'ACTIVE' : 'OFF'}</span><button id="toggleAutoTrade" class="px-3 py-1 rounded-full text-xs ${state.autoTradingActive ? 'bg-red-900/40 text-red-300' : 'bg-green-900/40 text-green-300'}">${state.autoTradingActive ? 'Disable' : 'Enable'}</button></div><div class="text-xs text-gray-400 mt-2">Copy Trading: ${state.copyConfigured ? 'Configured ✓' : 'Not Configured'}</div><button id="configureCopyBtn" class="text-xs text-blue-400 mt-1">${state.copyConfigured ? 'Reconfigure' : 'Set up copy'}</button></div>
+        </div>
+      `;
+      // attach events inside stats
+      document.getElementById('changeStrategyBtn')?.addEventListener('click', () => { 
+        let newStrat = prompt("Set preferred trading strategy (TrendFollowing, Scalping, Grid, Momentum)", state.preferredStrategy);
+        if(newStrat) { state.preferredStrategy = newStrat; updateStatsUI(); renderCurrentPage(); }
+      });
+      document.getElementById('toggleAutoTrade')?.addEventListener('click', () => {
+        state.autoTradingActive = !state.autoTradingActive;
+        updateStatsUI();
+        addToast(`Auto-trading ${state.autoTradingActive ? 'activated' : 'deactivated'} (demo simulation)`);
+      });
+      document.getElementById('configureCopyBtn')?.addEventListener('click', () => {
+        let acc = prompt("Enter Copy Trading account / signal provider (FREE feature)", state.copyConfigName === "Not Configured" ? "RaptorElite" : state.copyConfigName);
+        if(acc) {
+          state.copyConfigured = true;
+          state.copyConfigName = acc;
+          addToast(`Copy trading configured with ${acc} — 100% free live signals`);
+          updateStatsUI();
+          renderCurrentPage();
+        }
+      });
+    }
+
+    function addToast(msg) {
+      let toastDiv = document.createElement('div');
+      toastDiv.className = 'fixed bottom-5 right-5 bg-gray-900 border border-blue-500 text-white px-5 py-2 rounded-xl shadow-xl z-50 text-sm';
+      toastDiv.innerHTML = `<i class="fas fa-circle-info text-blue-400 mr-2"></i>${msg}`;
+      document.body.appendChild(toastDiv);
+      setTimeout(() => toastDiv.remove(), 2800);
+    }
+
+    // generate random signal + increments
+    function generateAISignal() {
+      const pairs = ["EUR/USD", "GBP/USD", "USD/JPY", "AUD/USD", "XAU/USD"];
+      const actions = ["BUY", "SELL"];
+      let pair = pairs[Math.floor(Math.random() * pairs.length)];
+      let action = actions[Math.floor(Math.random() * 2)];
+      let conf = 65 + Math.floor(Math.random() * 30);
+      let signalText = `${action} ${pair} @ ${(Math.random() * 2 + 0.9).toFixed(4)} (Conf ${conf}%)`;
+      state.lastSignals.unshift(signalText);
+      if(state.lastSignals.length > 6) state.lastSignals.pop();
+      state.signalsGen++;
+      state.aiConfidence = Math.min(98, Math.floor((state.aiConfidence * 0.9 + conf * 0.1)));
+      state.aiAnalyses += 1;
+      updateStatsUI();
+      renderCurrentPage(); // refresh signal feed
+      addToast(`🔔 New AI signal: ${signalText}`);
+    }
+
+    // Upload chart simulation
+    function handleChartUpload(file) {
+      if(file) {
+        state.chartsAnalyzed += 1;
+        state.aiConfidence = Math.min(98, state.aiConfidence + 2);
+        updateStatsUI();
+        addToast(`📊 Chart analyzed: pattern recognition complete (${file.name}) · support/resistance detected.`);
+        renderCurrentPage();
+      }
+    }
+
+    // RENDER ENGINE (pages)
+    const container = document.getElementById('page-container');
+    let activePageId = "dashboard";   // dashboard / proppass / subscription / strategy / plus sidebar specifics
+
+    function renderCurrentPage() {
+      if(activePageId === "dashboard") renderDashboard();
+      else if(activePageId === "proppass") renderPropPass();
+      else if(activePageId === "subscription") renderSubscription();
+      else if(activePageId === "strategy") renderStrategyPage();
+      else if(activePageId === "prompt") renderPromptTrading();
+      else if(activePageId === "aitrading") renderAITrading();
+      else if(activePageId === "uploadchart") renderUploadChart();
+      else if(activePageId === "bots") renderManageBots();
+      else if(activePageId === "support") renderSupport();
+      else if(activePageId === "settings") renderSettings();
+      else if(activePageId === "quicktools") renderQuickTools();
+      else renderDashboard();
+    }
+
+    // ---- DASHBOARD (full snapshot with chart, signals, start AI button)
+    function renderDashboard() {
+      container.innerHTML = `
+        <div class="space-y-6">
+          <div class="flex flex-wrap justify-between items-center"><div><h2 class="text-2xl font-bold">Welcome to Raptor AI <i class="fas fa-dragon text-blue-400"></i></h2><p class="text-gray-400 text-sm">Real-time AI market intelligence · Zero subscription required</p></div><button id="startAiTradingBtn" class="bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-2.5 rounded-xl font-semibold shadow-lg shadow-blue-500/20"><i class="fas fa-play mr-2"></i> Start AI Trading</button></div>
+          <div id="stats-dashboard"></div>
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6"><div class="glass-card lg:col-span-2 p-5"><div class="flex justify-between items-center"><span class="font-semibold"><i class="fas fa-chart-line text-blue-400 mr-2"></i>Live EUR/USD Trend Analysis</span><span class="text-xs text-blue-300">AI predictive model v6.0</span></div><canvas id="forexChart" height="160" class="mt-3 w-full"></canvas><p class="text-xs text-gray-400 mt-3">Machine learning trend detection: bullish divergence detected on 4H</p></div><div class="glass-card p-5"><div class="font-semibold flex items-center gap-2"><i class="fas fa-bell"></i> Live Signal Feed</div><div id="signal-feed" class="mt-3 space-y-2 max-h-56 overflow-y-auto"></div><button id="manualSignalBtn" class="mt-3 text-blue-400 text-sm w-full text-center">+ Generate fresh signal</button></div></div>
+          <div class="glass-card p-5"><div class="flex justify-between items-center"><span class="font-semibold"><i class="fas fa-robot"></i> Smart Bots Performance</span><button id="viewBotsQuick" class="text-xs text-blue-400">Manage Bots →</button></div><div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-3">${state.botList.map(b => `<div class="bg-gray-800/40 p-3 rounded-xl"><div class="font-medium">${b.name}</div><div class="flex justify-between text-xs"><span>Status: ${b.active ? '🟢 Active' : '⚫ Inactive'}</span><span class="${b.profit.includes('+') ? 'text-green-400' : 'text-red-400'}">${b.profit}</span></div></div>`).join('')}</div></div>
+        </div>
+      `;
+      updateStatsUI();
+      const ctx = document.getElementById('forexChart')?.getContext('2d');
+      if(ctx) {
+        new Chart(ctx, { type: 'line', data: { labels: ['00:00','04:00','08:00','12:00','16:00','20:00'], datasets: [{ label: 'EUR/USD (AI Forecast)', data: [1.082,1.084,1.0865,1.085,1.088,1.0915], borderColor: '#3b82f6', tension: 0.3, fill: false, pointBackgroundColor: '#a855f7' }] }, options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { labels: { color: '#ccc' } } } } });
+      }
+      function renderSignals() { const feedDiv = document.getElementById('signal-feed'); if(feedDiv) feedDiv.innerHTML = state.lastSignals.map(s => `<div class="bg-gray-800/60 p-2 rounded-lg text-sm border-l-2 border-blue-500"><i class="fas fa-waveform text-blue-400 mr-2"></i>${s}</div>`).join(''); }
+      renderSignals();
+      document.getElementById('startAiTradingBtn')?.addEventListener('click', () => { generateAISignal(); renderSignals(); addToast("Raptor AI engine scanning 23 currency pairs..."); });
+      document.getElementById('manualSignalBtn')?.addEventListener('click', () => { generateAISignal(); renderSignals(); });
+      document.getElementById('viewBotsQuick')?.addEventListener('click', () => { activePageId = "bots"; renderCurrentPage(); updateActiveSidebar(); });
+    }
+
+    // PropPass (free challenge simulation)
+    function renderPropPass() {
+      container.innerHTML = `<div class="glass-card p-6 max-w-4xl mx-auto"><div class="flex items-center gap-3"><i class="fas fa-trophy text-4xl text-amber-400"></i><h2 class="text-2xl font-bold">PropPass Challenge (FREE)</h2></div><p class="text-gray-300 mt-2">Simulated prop firm evaluation — 0% risk, 100% free. Achieve 8% profit target without daily loss.</p><div class="mt-5 grid grid-cols-2 gap-4"><div class="bg-gray-800/30 rounded-2xl p-4"><div class="text-sm text-gray-400">Balance</div><div class="text-2xl font-mono">$152,340</div><div class="text-green-400 text-sm">+3.2% this week</div></div><div class="bg-gray-800/30 rounded-2xl p-4"><div class="text-sm text-gray-400">Target left</div><div class="text-2xl font-mono">4.8%</div></div></div><button id="resetPropPass" class="mt-6 bg-blue-700/50 px-5 py-2 rounded-xl">Reset Demo Challenge</button><p class="text-xs text-blue-300 mt-4">💡 No subscription needed — all features unlocked.</p></div>`;
+      document.getElementById('resetPropPass')?.addEventListener('click', () => addToast("PropPass reset: Challenge restarted (free simulation)"));
+    }
+
+    function renderSubscription() {
+      container.innerHTML = `<div class="glass-card p-7 text-center space-y-4"><i class="fas fa-gift text-6xl text-blue-400"></i><h2 class="text-3xl font-bold">100% Free Forever</h2><p class="text-gray-300 max-w-lg mx-auto">Raptor AI has no paywalls, no subscription tiers. All AI features — Prompt Trading, Auto Signals, Bots, Copy Trading — are completely open access. Just trade smarter.</p><div class="bg-blue-900/30 p-4 rounded-2xl inline-block"><i class="fas fa-check-circle text-green-400"></i> No credit card required · Zero monthly fees</div><button class="mt-4 bg-blue-600 px-6 py-2 rounded-full" onclick="addToast('Enjoy unlimited features!')">Start using now</button></div>`;
+    }
+
+    function renderStrategyPage() {
+      container.innerHTML = `<div class="glass-card p-6"><h2 class="text-xl font-semibold flex gap-2"><i class="fas fa-chess-board"></i> AI Strategy Hub</h2><div class="grid md:grid-cols-2 gap-6 mt-5"><div class="bg-gray-800/40 p-4 rounded-xl"><div class="font-medium">Current Preferred Strategy</div><div class="text-2xl mt-1">${state.preferredStrategy}</div><button id="changeStrategyBtn2" class="text-sm text-blue-400 mt-2">Change strategy</button></div><div class="bg-gray-800/40 p-4 rounded-xl"><div>Strategy Backtest (last 90 days)</div><div class="text-green-400 text-xl">+14.7%</div><div>Sharpe: 1.92</div></div></div><div class="mt-4"><label class="text-sm">Download AI strategy report</label><button class="bg-blue-700/40 ml-3 px-4 py-1 rounded-lg text-xs">Generate PDF (Free)</button></div></div>`;
+      document.getElementById('changeStrategyBtn2')?.addEventListener('click', () => {
+        let newVal = prompt("New strategy name:", state.preferredStrategy);
+        if(newVal) { state.preferredStrategy = newVal; updateStatsUI(); renderStrategyPage(); }
+      });
+    }
+
+    function renderPromptTrading() {
+      container.innerHTML = `<div class="glass-card p-6"><h2><i class="fas fa-comment"></i> Prompt Trading — Ask Raptor AI</h2><textarea id="promptInput" rows="3" class="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 mt-3 text-white" placeholder="Example: 'Analyze GBP/USD and suggest a trade setup with SL/TP'"></textarea><button id="askAI" class="mt-3 bg-blue-600 px-5 py-2 rounded-xl">Ask Raptor AI</button><div id="aiResponse" class="mt-5 bg-gray-800/50 p-4 rounded-xl text-gray-200"></div><p class="text-xs text-gray-400 mt-2">⚡ Fully free — unlimited prompts (no API key needed, AI simulation delivers premium signals).</p></div>`;
+      document.getElementById('askAI')?.addEventListener('click', () => {
+        let q = document.getElementById('promptInput').value;
+        if(!q) { document.getElementById('aiResponse').innerHTML = '<i class="fas fa-robot"></i> Please type a forex inquiry.'; return; }
+        let mockReply = `🤖 Raptor AI analysis: ${q.includes('GBP') ? 'GBP/USD shows bullish divergence on RSI, target 1.2980. Stop at 1.2900. Confidence: 81%' : 'Based on market structure, EUR/USD sideways with potential breakout north. Suggested entry 1.0875, TP 1.0930. Risk 0.5%.'} (Live simulation — free tier)`;
+        document.getElementById('aiResponse').innerHTML = `<i class="fas fa-brain text-blue-400"></i> ${mockReply}`;
+        state.aiAnalyses += 1;
+        updateStatsUI();
+      });
+    }
+
+    function renderAITrading() {
+      container.innerHTML = `<div class="glass-card p-6"><h2><i class="fas fa-microchip"></i> AI Trading Console</h2><div class="mt-4 flex gap-4 flex-wrap"><button id="aiAnalyzeBtn" class="bg-blue-600 px-4 py-2 rounded-xl">🔥 AI Market Scan</button><button id="toggleBotDemo" class="bg-gray-700 px-4 py-2 rounded-xl">Simulate Auto-Entry</button></div><div id="aitResult" class="mt-5 text-gray-300 bg-black/20 p-4 rounded-xl">Click AI scan for realtime trend detection.</div><div class="text-sm text-yellow-300/70 mt-4"><i class="fas fa-lock-open"></i> Full automatic trade suggestions — no premium upgrade.</div></div>`;
+      document.getElementById('aiAnalyzeBtn')?.addEventListener('click', () => {
+        let signal = state.lastSignals[0] || "New signal: BUY NZD/USD, Conf 86%";
+        document.getElementById('aitResult').innerHTML = `<i class="fas fa-chart-line"></i> High-probability setup: ${signal}. Risk/Reward: 1:2.8. AI confidence ${state.aiConfidence}%.`;
+        generateAISignal();
+      });
+      document.getElementById('toggleBotDemo')?.addEventListener('click', () => addToast("Demo auto-trade would execute (simulated). Real paper trading requires broker connection, always free."));
+    }
+
+    function renderUploadChart() {
+      container.innerHTML = `<div class="glass-card p-7 text-center"><i class="fas fa-chart-image text-4xl"></i><h2 class="text-xl mt-2">Upload Chart for AI Analysis</h2><input type="file" id="chartFileInput" accept="image/*" class="mt-4 text-sm bg-gray-700 rounded-lg p-1"><button id="analyzeUploadBtn" class="mt-4 bg-blue-600 px-6 py-2 rounded-xl">AI Pattern Recognition</button><div id="uploadResult" class="mt-5 text-gray-300"></div><p class="text-xs mt-3">Raptor visual AI detects support/resistance, candlestick patterns (entirely free).</p></div>`;
+      document.getElementById('analyzeUploadBtn')?.addEventListener('click', () => {
+        let fileInput = document.getElementById('chartFileInput');
+        if(fileInput.files.length) handleChartUpload(fileInput.files[0]);
+        else addToast("Select a chart image first.");
+        document.getElementById('uploadResult').innerHTML = `✅ Chart analysis queued — AI processed patterns.`;
+      });
+    }
+
+    function renderManageBots() {
+      container.innerHTML = `<div class="glass-card p-6"><h2 class="text-2xl">Manage Trading Bots</h2><div class="space-y-3 mt-4">${state.botList.map(b => `<div class="flex justify-between items-center bg-gray-800/40 p-3 rounded-xl"><div><span class="font-medium">${b.name}</span><div class="text-xs text-gray-400">${b.active ? 'Active' : 'Paused'}</div></div><div><button data-id="${b.id}" class="toggle-bot-action px-4 py-1 rounded-lg ${b.active ? 'bg-red-800/50' : 'bg-green-800/50'}">${b.active ? 'Stop' : 'Start'}</button></div></div>`).join('')}</div><button id="createBotFree" class="mt-5 text-blue-400">+ Create custom AI bot (free)</button><p class="text-xs mt-2">All bots run on simulated environment — no charges.</p></div>`;
+      document.querySelectorAll('.toggle-bot-action').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          let id = parseInt(btn.dataset.id);
+          let bot = state.botList.find(b => b.id === id);
+          if(bot) { bot.active = !bot.active; bot.profit = bot.active ? "+0.9%" : "+0.0%"; addToast(`${bot.name} ${bot.active ? 'activated' : 'deactivated'}`); renderManageBots(); updateStatsUI(); }
+        });
+      });
+      document.getElementById('createBotFree')?.addEventListener('click', () => addToast("New bot builder opens (fully customizable, free forever)"));
+    }
+
+    function renderSupport() { container.innerHTML = `<div class="glass-card p-7"><h2>Contact Raptor Support</h2><p class="mt-2">Email: support@raptorai.com | Live chat 24/7 (AI assistant)<br>Community Discord: Free access for all traders</p><textarea placeholder="Ask anything..." class="w-full mt-4 bg-gray-800 p-3 rounded-xl"></textarea><button class="mt-2 bg-blue-600 px-4 py-2 rounded-xl">Send message</button></div>`; }
+    function renderSettings() { container.innerHTML = `<div class="glass-card p-7"><h2>Preferences (Free tier)</h2><label class="flex items-center gap-2 mt-4"><input type="checkbox" id="darkToggle" checked> Dark mode (always on)</label><label class="flex items-center gap-2 mt-2"><input type="checkbox" id="soundAlert"> Enable signal sound alerts</label><button id="saveSettingsBtn" class="mt-5 bg-blue-600 px-5 py-2 rounded-xl">Save</button><p class="text-gray-400 text-sm mt-4">All settings free, no paywall.</p></div>`; }
+    function renderQuickTools() { container.innerHTML = `<div class="glass-card p-6 grid gap-4"><h2>Quick Access Suite</h2><div class="grid grid-cols-2 gap-4"><button class="bg-gray-800 p-4 rounded-xl" id="quickSignal">⚡ Generate Signal</button><button class="bg-gray-800 p-4 rounded-xl" id="quickChart">📸 Upload Chart</button><button class="bg-gray-800 p-4 rounded-xl" id="quickBotStatus">🤖 Bots Dashboard</button><button class="bg-gray-800 p-4 rounded-xl" id="quickPrompt">💬 Prompt Trading</button></div></div>`;
+      document.getElementById('quickSignal')?.addEventListener('click', generateAISignal);
+      document.getElementById('quickChart')?.addEventListener('click', () => { activePageId = "uploadchart"; renderCurrentPage(); updateActiveSidebar(); });
+      document.getElementById('quickBotStatus')?.addEventListener('click', () => { activePageId = "bots"; renderCurrentPage(); });
+      document.getElementById('quickPrompt')?.addEventListener('click', () => { activePageId = "prompt"; renderCurrentPage(); });
+    }
+
+    function updateActiveSidebar() { document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active-nav', 'bg-blue-900/30')); document.querySelector(`.sidebar-item[data-page="${activePageId === "dashboard" ? "dashboard" : activePageId === "proppass" ? "dashboard" : activePageId}"]`)?.classList.add('active-nav'); }
+    
+    // NAVIGATION binding
+    document.querySelectorAll('.sidebar-item').forEach(el => {
+      el.addEventListener('click', (e) => {
+        let page = el.getAttribute('data-page');
+        if(page === "dashboard") activePageId = "dashboard";
+        else if(page === "prompt") activePageId = "prompt";
+        else if(page === "aitrading") activePageId = "aitrading";
+        else if(page === "uploadchart") activePageId = "uploadchart";
+        else if(page === "bots") activePageId = "bots";
+        else if(page === "subscription") activePageId = "subscription";
+        else if(page === "support") activePageId = "support";
+        else if(page === "settings") activePageId = "settings";
+        else if(page === "quicktools") activePageId = "quicktools";
+        else activePageId = "dashboard";
+        renderCurrentPage();
+        updateActiveSidebar();
+      });
+    });
+    document.querySelectorAll('.topnav-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        let dest = btn.getAttribute('data-topnav');
+        if(dest === 'dashboard') activePageId = "dashboard";
+        else if(dest === 'proppass') activePageId = "proppass";
+        else if(dest === 'subscription') activePageId = "subscription";
+        else if(dest === 'strategy') activePageId = "strategy";
+        renderCurrentPage();
+        updateActiveSidebar();
+      });
+    });
+    // initial draw
+    renderCurrentPage();
+    updateActiveSidebar();
+  </script>
+</body>
+</html>
